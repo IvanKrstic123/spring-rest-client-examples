@@ -2,12 +2,14 @@ package guru.springframework.springrestclientexamples.services;
 
 
 import guru.springframework.api.domain.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -20,20 +22,27 @@ public class ApiServiceImpl implements ApiService{
 
     private WebClient webClient;
 
-    public ApiServiceImpl(RestTemplateBuilder builderBlocking, WebClient.Builder builderNonBlocking) {
+    private final String api_url;
+
+    public ApiServiceImpl(RestTemplateBuilder builderBlocking, WebClient.Builder builderNonBlocking, @Value("${api.url}") String api_url) {
         this.restTemplate = builderBlocking
                 .rootUri("https://jsonplaceholder.typicode.com")
                 .build();
         this.webClient = builderNonBlocking
                 .baseUrl("https://jsonplaceholder.typicode.com")
                 .build();
+        this.api_url = api_url;
     }
 
     //blocking - RestTemplate
     @Override
     public List<User> getUsersBlocking(Integer limit) {
 
-        return restTemplate.exchange("/users?_limit=" + limit, HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {})
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(api_url)
+                .queryParam("_limit", limit);
+
+        return restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {})
                 .getBody();
     }
 
