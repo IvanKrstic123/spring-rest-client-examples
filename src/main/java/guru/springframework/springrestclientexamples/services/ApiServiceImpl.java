@@ -54,13 +54,18 @@ public class ApiServiceImpl implements ApiService{
     //non blocking - WebClient
     @Override
     public Flux<User> getUsersNonBlocking(Integer limit) {
-        return webClient.get().uri("/users?_limit=" + limit)
+        return WebClient
+                .create(api_url)
+                .get()
+                .uri(uriBuilder -> uriBuilder.queryParam("_limit", limit).build())
                 .retrieve()
                 .bodyToFlux(User.class);
     }
 
     public Mono<User> getUserByIdNonBlocking(int id) {
-        return webClient.get().uri("/users/{id}", id)
+        return webClient
+                .get()
+                .uri("/users/{id}", id)
                 .retrieve()
                 .bodyToMono(User.class);
     }
