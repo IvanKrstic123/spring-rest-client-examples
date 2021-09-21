@@ -14,7 +14,7 @@ import java.util.List;
 class ApiServiceImplTest {
 
     @Autowired
-    private ApiServiceImpl apiService;
+    private ApiService apiService;
 
     @BeforeEach
     void setUp() {
