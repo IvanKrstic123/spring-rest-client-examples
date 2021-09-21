@@ -1,4 +1,4 @@
-package guru.springframework.springrestclientexamples.api.domain;
+package guru.springframework.api.domain;
 
 import lombok.Getter;
 import lombok.Setter;
